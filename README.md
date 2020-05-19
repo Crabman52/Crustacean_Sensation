@@ -1,5 +1,5 @@
 # Crustacean_Sensation
-Instructions for Crab Maturity Analysis. 
+Instructions for using Crab Maturity Analysis Code in R. 
 This is an R-language program designed to separate Mature from Immature crabs based on allometric growth of body parts. Code logic is based on Somerton (1980) Program MATURE. The program separates two overlapping groups of points by minimizing the RSS of two regression lines, and compares the remaining RSS to that of a single line. The program was developed by Brad Stevens, Univ. of MD Eastern Shore. Suggestions for improvements are welcome.  This program is divided into multiple modules, several of which require R package(dplyr).  
 All modules read and modify your data prior to analysis. Initial Input required for all modules is: 
 1.	Path for reading input data file
