@@ -87,6 +87,6 @@ abline(h= 0.5)  # draws horizontal line
 abline(v= smat)  # draws vertical line
 
 # Export maturity plot
-dev.copy(png,'Crab Maturity Plot 3.png', width=600,height=500);dev.off()
+dev.copy(png,'Crab Maturity Plot 4 SM50.png', width=600,height=500);dev.off()
 
-# End of Part C
+# End of Module 3
