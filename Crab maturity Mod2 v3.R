@@ -38,6 +38,8 @@ ms.0 <- anova(lm.0)[[3]]  # mean squared error
 F.0 <- ms.0[1]/ms.0[2]    # F value
 n.0 <- dim(datfile)[1]
 
+AIC.0 <- n.0*log(rss.0/n.0)+6
+
 # Save plot
 plot(lx,ly,  ylab="log y",xlab="log x", main="Single Line")
 abline(lm.0)
@@ -95,10 +97,12 @@ fitunk <- function(lx,ly,tindex,index,unkn,rss.p) {
 
 ###### Section B3: Set range limits and iterate ##########
 # B3a: Set range limits and increments (lo, hi, inc)
-min.vals <- seq(50,80,5) # bounds and increment for lower limit
-max.vals <- seq(115,140,5) # bounds and increment for upper limit 
+min.vals <- seq(40,60,5) # bounds and increment for lower limit
+max.vals <- seq(120,140,5) # bounds and increment for upper limit 
 min.i <- length(min.vals) #number of lower bounds
 max.i <- length(max.vals) #number of upper bounds
+
+## Create array for results
 Fvals <-array(dim=c(min.i,max.i)) # set up array
 rownames(Fvals)<-min.vals # name rows
 colnames(Fvals)<-max.vals # name columns
@@ -145,7 +149,7 @@ if(F.com>=Fmax) {
   Fmax <- F.com
   Fmax.m <- m
   Fmax.n <- n
-}  # end if 
+}  # end if
   Fvals[m,n] <- F.com
   }
 }  # end of loop B3b
@@ -187,6 +191,7 @@ for(i in 1:15){
 } # end function loop
 
 rss.p <- fit.u[[2]]
+AIC.2 <- n.0*log(rss.p/n.0)+6
 
 # calculate F for best range
 ms.diff <- (ss.0[2] - rss.p) / 2
@@ -200,6 +205,7 @@ F.prob <- pf(Tval, df1 = 2, df = n.0-4, lower.tail = F)
 T.prob <- 2*pt(-abs(Tval),df = n.0-4)
 Fout <- paste("F Probability =", signif(F.prob,4))
 if (F.prob < 0.05)  sig else nsig; Fout
+
 
 #  fit lines to assigned categories
 x1<-lx[tindex==1]
@@ -228,7 +234,7 @@ for (i in 1:9){
   ypos[i] <- min(ly) + range.ly*i*0.1
 }
 
-# Plot 2: crabs as known juveniles, unknowns, and known adults 
+# Plot 2: Initial ranges of known juveniles, adults, and unknowns  
 plot(lx,ly, type="n", ylab="ln(CH) (mm)",xlab="ln(CW) (mm)",
      main="Initial Assignments", bty="l")
 plotchar <-index+(index==0)*3 # plot characters
@@ -242,7 +248,7 @@ text(xpos[7], ypos[2], labels = text2.1)
 
 dev.copy(png,'Crab Maturity Plot 2 - Initial.png', width=600,height=500);dev.off()
 
-# Plot graph No. 3
+##### Plot graph No. 3: Assigned Maturity ####
 plot(lx,ly, type="n",ylab=llab.y, xlab=llab.x, main=lab.sex)
 points(x1,y1, pch=1, cex=1.2)
 points(x2,y2, pch=2, cex=1.2)
@@ -267,4 +273,15 @@ text(min(lx), ypos[5], labels = text3.2, adj=0)
 # output graph
 dev.copy(png,'Crab Maturity Plot 3 - Assigned.png', width=600,height=500);dev.off()
 
+## AIC Table
+lines <- c("One-line", "Two-line")
+AIC <- sort(c(AIC.0,AIC.2), decreasing = T) 
+AICc <- AIC+((6*4)/(n.0-3-1))
+D.AICc <- max(AICc)-AICc
+solution <- lines[match(c(AIC.0,AIC.2), AIC)] #puts labels in order
+tab1<- cbind(solution, round(AIC,1), round(AICc,1), round(D.AICc,1)) # creates table
+colnames(tab1) <- c("Solution","AIC","AICc","D.AICc")
+tab1 
+
 # End of Part B
+
