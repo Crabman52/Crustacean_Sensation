@@ -22,14 +22,14 @@ library(car)
 # Rewrite this section to fit your own needs
 
 ### Read Jonah Crab Data
-#setwd("C:/B Steven Backup/Projects/Jonah Crabs")  #laptop
-setwd("C:/Users/bgstevens/Documents/R/R Projects/Crab Maturity")  #laptop
+setwd("C:/Users/bgstevens/Documents/R Data/R Projects/Crab Maturity")   #Desktop
+#setwd("C:/Users/bgstevens/Documents/R/R Projects/Crab Maturity")  #laptop
 
 # Clear out old data if necessary
 rm(list=ls(all=TRUE))
 
 # Read Data 
-data.1 <- read.csv("CB_12_21_CSV.csv", header=T) #
+data.1 <- read.csv("JonahCrab_testData.csv", header=T) #
 #head(data.1)
 
 # Convert Sex to a factor
@@ -41,8 +41,9 @@ sex.code <- "1" # or "M"
 lab.sex <- ifelse( (sex.code=="1" |sex.code=="M"),yes="Males", no= "Females")
 
 ##  Select data
-datfile <- subset(data.1,Sex==sex.code) 
+datfile <- data.frame(subset(data.1,Sex==sex.code)) 
 
+colnames(datfile)
 ############### Section A2: Answer some questions ##########
 
 # What is the independent variable? (Choose correct line)
@@ -56,11 +57,11 @@ llab.x <- ifelse(meas == "W",yes = "ln(Width)", no = "ln(Length)")
 
 # If Male: What is the dependent variable(s)
 if ( sex.code=="1" |sex.code=="M"){
-  depvar.1 <- datfile$CH.AW # if side 1 measured
+  depvar.1 <- datfile$R_ChH # if side 1 measured
   depvar.1[is.na(depvar.1)]<-0 #turn y variable NAs to 0 
 
   # if side 2  
-  depvar.2 <- datfile$Left.CH # if side 2 measured
+  depvar.2 <- datfile$L_ChH # if side 2 measured
   depvar.2[is.na(depvar.2)]<-0
 
 # If  both claws measured, use the larger:
@@ -69,11 +70,11 @@ if ( sex.code=="1" |sex.code=="M"){
 }  # end if.male section
 
   # If only one claw measured
-#  datfile$yvar <- datfile$ChH; lab.y <- "Chela Height"; llab.y <- "log (Chela Ht)" # if male
+#  datfile$yvar <- datfile$R_ChH; lab.y <- "Chela Height"; llab.y <- "log (Chela Ht)" # if male
 
 #  If sex = Female, use abdo width only
   if ( (sex.code=="2" |sex.code=="F")){
-    datfile$yvar <- datfile$CH.AW
+    datfile$yvar <- datfile$AbWid
     lab.y <- "Abdomen width"
     llab.y <- "ln(Abdo width)" 
   }
@@ -82,7 +83,7 @@ if ( sex.code=="1" |sex.code=="M"){
 NoNA <- !(is.na(datfile$yvar)|is.na(datfile$xvar))  # finds NA in variables
 datfile<- filter(datfile, NoNA)   # removes NA from data file
 NoZero<- !((datfile$yvar==0)|(datfile$xvar==0)) # finds 0s in variables
-datfile<- filter(datfile, NoZero) 
+datfile<- filter(datfile, NoZero)
 
 ## Use Cooks distance to remove outliers
 fit1 <- lm(log(datfile$yvar)~log(datfile$xvar))
@@ -90,7 +91,7 @@ plot(log(datfile$yvar)~log(datfile$xvar))
 abline(fit1)
 cook <- cooks.distance(fit1)
 plot(cook)
-  cooks.lim <- 0.1 #  FILL IN MANUALLY !!!
+  cooks.lim <- 0.2 #  FILL IN MANUALLY !!!
   abline(h=cooks.lim, col="red")
 
   # ### This section removes outliers ####
